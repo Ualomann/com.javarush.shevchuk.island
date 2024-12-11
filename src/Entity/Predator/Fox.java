@@ -18,7 +18,7 @@ public class Fox extends Predator{
 
     }
     @Override
-    public HashMap<String, Integer> ChanceToEat() {
+    public HashMap<String, Integer> chanceToEat() {
         return foxChance;
     }
 

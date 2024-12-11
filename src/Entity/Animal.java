@@ -1,14 +1,15 @@
 package Entity;
 
 import Entity.Location.Cell;
+import Entity.Location.Island;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class Animal extends LivingOrganism{
-    ReentrantLock lock = new ReentrantLock();
 
     private int maxSpeed;
     private final double maxSatiety;
@@ -26,6 +27,7 @@ public abstract class Animal extends LivingOrganism{
     private boolean isEat;
 
     private boolean isMoved = false;
+    private boolean isReproduce = false;
 
     private Cell currentCell;
 
@@ -36,12 +38,16 @@ public abstract class Animal extends LivingOrganism{
         this.currentCell = currentCell;
     }
 
+    public boolean getIsReproduce(){
+        return isReproduce;
+    }
+
 
     public Animal(double weight, int maxSpeed, double maxSatiety, int maxCountOfCell, String name,String EMOJI) {
         super(weight, maxCountOfCell, name, EMOJI);
         this.maxSpeed = maxSpeed;
         this.maxSatiety = maxSatiety;
-        actualSatiety = maxSatiety /* - ((maxSatiety * 20) / 100) */;
+        actualSatiety = maxSatiety  - ((maxSatiety * 20) / 100);
     }
     public boolean isEat() {
         return isEat;
@@ -62,19 +68,17 @@ public abstract class Animal extends LivingOrganism{
     public double getMaxSatiety(){
         return maxSatiety;
     }
-    public abstract HashMap<String, Integer> ChanceToEat();
+    public abstract HashMap<String, Integer> chanceToEat();
     public void eat(LivingOrganism prey) {
-        lock.lock();
-        try{
             this.isEat = false;
             if (prey == null || prey.getIsDead() || this.actualSatiety == this.getMaxSatiety() || this.isEat
-            || !this.ChanceToEat().containsKey(prey.getName())) {
+            || !this.chanceToEat().containsKey(prey.getName())) {
                 return;
             }
-                int random = ThreadLocalRandom.current().nextInt(0, 100);
+                int random = ThreadLocalRandom.current().nextInt(0, 101);
             int animalChanceToEat;
                 try{
-                    animalChanceToEat = this.ChanceToEat().get(prey.getName());
+                    animalChanceToEat = this.chanceToEat().get(prey.getName());
                     }
                 catch (NullPointerException e){
                     return;
@@ -90,45 +94,41 @@ public abstract class Animal extends LivingOrganism{
 
             this.isEat = true;
             die(prey);}
-        finally {
-            lock.unlock();
-        }
-    }
 
 
-    public boolean canReproduceInCell(Cell cell) {
-        lock.lock();
-        long currentPopulation = 0;
-        try {
-            if (cell == null || cell.getCell() == null) {
-                return false;
+    public void eatOnCell(Cell cell){
+        List<LivingOrganism> temporarily = cell.getCell();
+        if(!this.getIsDead() && !this.isEat){
+            for (LivingOrganism organism : cell.getCell()) {
+                List<LivingOrganism> targetEatAnimal = new ArrayList<>();
+                if(!organism.getIsDead() && this.chanceToEat().containsKey(organism.getName())){
+                    targetEatAnimal.add(organism);
+                    LivingOrganism first = targetEatAnimal.get(0);
+                    this.eat(first);
+                }
             }
-
-            currentPopulation = cell.getCell().stream()
-                    .filter(organism -> this.getClass().isAssignableFrom(organism.getClass())) // Считаем только данный вид
-                    .count();
-        }finally {
-            lock.unlock();
         }
-        return currentPopulation < this.getMaxCountOfCell();
+        List <LivingOrganism> devouredList = new ArrayList<>();
+        for (int i = 0; i < cell.getCell().size(); i++) {
+            if(cell.getCell().get(i).getIsDead()){
+                devouredList.add(cell.getCell().get(i));
+            }
+        }
+        temporarily.removeAll(devouredList);
+        cell.setCell(temporarily);
     }
 
-    public LivingOrganism reproduce(LivingOrganism partner) {
-        lock.lock(); // Блокируем для синхронизации
-        try {
-            // Проверяем, что организмы одного вида, оба живы, и лимит не превышен
+
+
+
+    public Animal reproduce(Animal partner) {
             if (this.getClass().equals(partner.getClass())
                     && !this.getIsDead() && !partner.getIsDead()
-                    && canReproduceInCell(getCurrentCell())) {
-                try {
-                    if(partner instanceof Animal) {
-                        Animal privedenie = (Animal) partner;
-
-                        Animal children = privedenie.getClass().getConstructor().newInstance();
-                        currentCell.addReproduce(children);
-                        // Создаём потомка через рефлексию
+                    ){
+                try {   this.isReproduce = true;
+                        Animal children = getClass().getConstructor().newInstance();
                         return children;
-                    }
+
                 } catch (InstantiationException e) {
                     throw new RuntimeException("Ошибка при создании объекта потомка", e);
                 } catch (IllegalAccessException e) {
@@ -139,14 +139,45 @@ public abstract class Animal extends LivingOrganism{
                     throw new RuntimeException("Конструктор потомка не найден", e);
                 }
             }
-        } finally {
-            lock.unlock(); // Освобождаем блокировку
-        }
         return this; // Если размножение невозможно, возвращаем null
+    }
+
+    public void reproduceOnCell(Cell cell){
+        List<LivingOrganism> temporarily = cell.getCell();
+        List<Animal> childList = new ArrayList<>();
+        if(!this.getIsDead() && !this.getIsReproduce()){
+            long countAnimalOnCell = cell.getAnimalCountOnCell(this);
+            long maxCountInCell = this.getMaxCountOfCell();
+
+            for (Animal animal : cell.getAnimalOnCell()) {
+                if(countAnimalOnCell >= 2 && countAnimalOnCell < maxCountInCell &&this != animal){
+                    Animal child = this.reproduce(animal);
+                        if(this != child){
+                            childList.add(child);
+                        }
+                }
+            }
+            temporarily.addAll(childList);
+            cell.setCell(temporarily);
+
+        }
     }
 
     // Проверяем, можно ли размножаться
 
+
+    public void movingToOtherCells(Island island){
+        Cell[][] is = island.getIsland();
+
+    }
+    public boolean canMoveOrganism(Cell cell){
+        long countAnimalOnCell = cell.getAnimalCountOnCell(this);
+        long maxCountInCell = this.getMaxCountOfCell();
+        if (countAnimalOnCell < maxCountInCell && !this.getIsDead() && !this.isMoved()){
+            return true;
+        }
+        return false;
+    }
 
     private int[] chooseDirection(Cell currentCell, Cell[][] island) {
         int[][] directions = {
@@ -157,20 +188,22 @@ public abstract class Animal extends LivingOrganism{
         int directionIndex = ThreadLocalRandom.current().nextInt(directions.length);
 
         // Выбор расстояния хода от 1 до максимальной скорости включительно
-        int step = ThreadLocalRandom.current().nextInt(1, this.maxSpeed + 1);
+        int step = this.maxSpeed > 1
+                ? ThreadLocalRandom.current().nextInt(1, this.maxSpeed + 1)  // Шаг от 1 до maxSpeed
+                : 1;  // Если maxSpeed == 1, шаг всегда 1
 
         // Возвращаем направление с учётом шага
         return new int[]{directions[directionIndex][0] * step, directions[directionIndex][1] * step};
     }
 
     public void move(Cell currentCell, Cell[][] island) {
-        if(this.isMoved()){
+        // Если животное уже двигалось или мёртвое, выход из метода
+        if (this.isMoved() || this.getIsDead()) {
             return;
         }
-        if(this.getIsDead()){
-            return;
-        }
-        currentCell.getLock().lock(); // Блокируем текущую клетку
+
+        // Блокируем текущую клетку
+        currentCell.getLock().lock();
         try {
             // Получаем текущие координаты клетки
             int currentX = currentCell.getX();
@@ -184,36 +217,58 @@ public abstract class Animal extends LivingOrganism{
             // Проверяем границы острова
             if (newX >= 0 && newY >= 0 && newX < island.length && newY < island[0].length) {
                 Cell newCell = island[newX][newY];
-                newCell.getLock().lock(); // Блокируем новую клетку
+
+                // Блокируем новую клетку
+                newCell.getLock().lock();
                 try {
-                    // Проверяем, можно ли переместиться
-                    if (newCell.canMoveOrganism(this)) {
+                    // Проверяем, можно ли переместиться в новую клетку
+                    if (this.canMoveOrganism(newCell)) {
+                        // Перемещаем животное
                         currentCell.removeOrganism(this); // Убираем из текущей клетки
-                        newCell.getCellMoved().add(this); // Добавляем в новую клетку
+                        newCell.getCell().add(this); // Добавляем в новую клетку
                         this.setMoved(true);
-//                        this.setCurrentCell(newCell);
-//                        System.out.println(this + " переместился на (" + newX + "," + newY + ").");
+                        this.setCurrentCell(newCell);
+
+//                         Логирование перемещения (если нужно)
+//                         System.out.println(this + " переместился на (" + newX + "," + newY + ").");
                     } else {
-//                        System.out.println(this + " не может переместиться в клетку (" + newX + "," + newY + ").");
+                        // Логирование невозможности перемещения (если нужно)
+//                         System.out.println(this + " не может переместиться в клетку (" + newX + "," + newY + ").");
                     }
                 } finally {
+                    // Разблокируем новую клетку
                     newCell.getLock().unlock();
                 }
             } else {
-//                System.out.println(this + " не может выйти за пределы острова.");
+                // Логирование выхода за пределы острова (если нужно)
+                // System.out.println(this + " не может выйти за пределы острова.");
             }
         } finally {
+            // Разблокируем текущую клетку
             currentCell.getLock().unlock();
         }
     }
 
+    public void deathFromHunger(Cell cell){
+        List<LivingOrganism> temporarily = cell.getCell();
+        List<Animal> deadList = new ArrayList<>();
+        this.worker();
+        if(this.getIsDead()){
+            deadList.add(this);
+        }
+        temporarily.removeAll(deadList);
+        cell.setCell(temporarily);
+    }
+
+
     public void worker() {
-        actualSatiety = actualSatiety - ((maxSatiety * 5) / 100);
-        if(actualSatiety<=0){
+        this.actualSatiety = this.actualSatiety - ((this.maxSatiety * 15) / 100);
+        if(this.actualSatiety<=0){
             die(this);
-//            System.out.println(this.getClass().getSimpleName() + "Умер от голода");
         }
     }
+
+
 
 
 

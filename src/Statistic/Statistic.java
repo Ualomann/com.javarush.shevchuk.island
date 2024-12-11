@@ -23,7 +23,7 @@ public class Statistic implements Runnable{
         }
         // Выводим результаты подсчёта с эмодзи
         System.out.println("Всего животных:");
-        counts.forEach((emoji, count) -> System.out.print(emoji + ": " + count+ "  " ));
-        System.out.println();
+        counts.forEach((emoji, count) -> System.out.print(emoji + ": " + count+ "  \n"));
+//        System.out.println();
     }
 }

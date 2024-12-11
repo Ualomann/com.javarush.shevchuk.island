@@ -16,7 +16,7 @@ public class Boar extends Herbivore implements Omnivorous {
 
     }
     @Override
-    public HashMap<String, Integer> ChanceToEat() {
+    public HashMap<String, Integer> chanceToEat() {
         return boarChance;
     }
 

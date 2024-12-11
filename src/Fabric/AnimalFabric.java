@@ -12,10 +12,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AnimalFabric {
     public enum LiveOrgNames{
-        WOLF(), BOA(), FOX(), BEAR(), EAGLE(),
+        WOLF, BOA, FOX, BEAR, EAGLE,
 
-        HORSE(), DEER(), RABBIT(), MOUSE(), GOAT(),
-        SHEEP(), BOAR(), BUFFALO(), DUCK(), CATERPILLAR(),
+        HORSE, DEER, RABBIT, MOUSE, GOAT,
+        SHEEP, BOAR, BUFFALO, DUCK, CATERPILLAR,
         PLANT
     }
     private final Cell[][] island;
@@ -33,21 +33,6 @@ public class AnimalFabric {
     public static void createCountLiveOrganism(LiveOrgNames liveOrgNames,Integer count){
         for (int i = 0; i < count; i++) {
             fabricList.add(createLiveOrganism(liveOrgNames));
-        }
-    }
-
-    public void populate(LiveOrgNames liveOrgName, int count) {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-
-        for (int i = 0; i < count; i++) {
-            int x = random.nextInt(island.length);
-            int y = random.nextInt(island[0].length);
-
-            LivingOrganism organism = createLiveOrganism(liveOrgName);
-            if (organism != null) {
-                island[x][y].addOrganism(organism); // Добавляем в клетку
-                organism.setCurrentCell(island[x][y]); // Устанавливаем текущую клетку
-            }
         }
     }
 

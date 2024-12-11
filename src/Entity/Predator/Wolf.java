@@ -19,7 +19,7 @@ public class Wolf extends Predator{
         wolfChance.put(DUCK_NAME,   CHANCE_WOLF_EAT_DUCK);
     }
     @Override
-    public HashMap<String, Integer> ChanceToEat() {
+    public HashMap<String, Integer> chanceToEat() {
         return wolfChance;
     }
 

@@ -45,16 +45,6 @@ public abstract class LivingOrganism {
         isDead = true;
     }
 
-    public void eat(LivingOrganism prey) {}
-
-    public LivingOrganism reproduce(LivingOrganism partner){
-        System.out.println("Размножение из класса родителя");
-        return this;
-    };
-
-
-    public void setCurrentCell(Cell currentCell){};
-
     public String getEMOJI() {
         return this.EMOJI;
     }

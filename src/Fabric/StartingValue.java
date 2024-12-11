@@ -10,11 +10,6 @@ import java.util.List;
 public class StartingValue {
     public static List<LivingOrganism> populatingOneCell()
     {
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.WOLF,5);
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.FOX,5);
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.BEAR,2);
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.BOA,2);
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.EAGLE,2);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.HORSE,5);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.DEER,5);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.RABBIT,10);
@@ -25,7 +20,13 @@ public class StartingValue {
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.BUFFALO,2);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.DUCK,10);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.CATERPILLAR,50);
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.PLANT,30);
+        AnimalFabric.createCountLiveOrganism(LiveOrgNames.PLANT,20);
+        AnimalFabric.createCountLiveOrganism(LiveOrgNames.WOLF,5);
+        AnimalFabric.createCountLiveOrganism(LiveOrgNames.FOX,5);
+        AnimalFabric.createCountLiveOrganism(LiveOrgNames.BEAR,2);
+        AnimalFabric.createCountLiveOrganism(LiveOrgNames.BOA,2);
+        AnimalFabric.createCountLiveOrganism(LiveOrgNames.EAGLE,2);
+
         List<LivingOrganism> startV = AnimalFabric.getFabricList();
         return startV;
     }

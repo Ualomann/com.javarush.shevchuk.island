@@ -11,7 +11,7 @@ public class Rabbit extends Herbivore{
 
     }
     @Override
-    public HashMap<String, Integer> ChanceToEat() {
+    public HashMap<String, Integer> chanceToEat() {
         return rabbitChance;
     }
 

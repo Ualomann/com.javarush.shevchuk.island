@@ -33,5 +33,6 @@ public class IslandStatistic implements Runnable {
 
         System.out.println("Общее количество животных и растений на острове:");
         counts.forEach((emoji, count) -> System.out.println(emoji + ": " + count));
+        System.out.println();
     }
 }

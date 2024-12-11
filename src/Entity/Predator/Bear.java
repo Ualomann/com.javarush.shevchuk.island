@@ -9,8 +9,6 @@ public class Bear extends Predator{
         bearChance = new HashMap<>();
 
         bearChance.put(BOA_NAME,    CHANCE_BEAR_EAT_BOA);
-
-
         bearChance.put(HORSE_NAME,  CHANCE_BEAR_EAT_HORSE);
         bearChance.put(DEER_NAME,   CHANCE_BEAR_EAT_DEER);
         bearChance.put(RABBIT_NAME, CHANCE_BEAR_EAT_RABBIT);
@@ -23,7 +21,7 @@ public class Bear extends Predator{
 
     }
     @Override
-    public HashMap<String, Integer> ChanceToEat() {
+    public HashMap<String, Integer> chanceToEat() {
         return bearChance;
     }
 

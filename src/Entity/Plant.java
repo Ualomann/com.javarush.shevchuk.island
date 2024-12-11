@@ -1,53 +1,30 @@
 package Entity;
 
 import Entity.Location.Cell;
+import Fabric.AnimalFabric;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static Setting.PlantSetting.PLANT_COUNT;
 import static Setting.Setting.*;
 
 
 public class Plant extends LivingOrganism{
-    Cell cell;
-    public boolean isDead;
-
-
-    @Override
-    public boolean getIsDead() {
-        return super.getIsDead();
-    }
-
-    public void die(LivingOrganism prey) {
-        super.die(prey);
-    }
-
 
     public Plant(){
         super(WEIGHT_PLANT,MAX_COUNT_PLANT,PLANT_NAME,PLANT_EMOJI);
     }
 
-    @Override
-    public LivingOrganism reproduce(LivingOrganism partner) {
-        return this;
-    }
-    public void move(Cell currentCell, Cell[][] island){
-        return;
-    }
-    public void eat(LivingOrganism prey){
-        return;
-    }
-    public void worker() {return;}
 
-    public static void canGrow(ArrayList<LivingOrganism> organisms){
-
-    }
-
-    public static void grow(Cell cell){
-
-        for (int i = 0; i < PLANT_COUNT; i++) {
-            cell.addOrganism(new Plant());
+    public void grow(Cell cell) {
+        if (cell.getPlantOnCell().size() >= MAX_COUNT_PLANT) {
+            List<LivingOrganism> temporarily = cell.getCell();
+            for (int i = 0; i < PLANT_COUNT; i++) {
+                LivingOrganism organism = AnimalFabric.createLiveOrganism(AnimalFabric.LiveOrgNames.PLANT);
+                temporarily.add(organism);
+            }
+        cell.setCell(temporarily);
         }
     }
-
 }
