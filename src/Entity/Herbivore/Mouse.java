@@ -1,12 +1,10 @@
 package Entity.Herbivore;
 
-import Setting.Omnivorous;
-
 import java.util.HashMap;
 
 import static Setting.Setting.*;
 
-public class Mouse extends Herbivore implements Omnivorous {
+public class Mouse extends Herbivore{
     private final HashMap<String,Integer> mouseChance;{
         mouseChance = new HashMap<>();
         mouseChance.put(CATERPILLAR_NAME,CHANCE_MOUSE_EAT_CATERPILLAR);

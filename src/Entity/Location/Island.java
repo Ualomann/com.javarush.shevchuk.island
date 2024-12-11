@@ -24,17 +24,17 @@ public class Island {
                 if (x < WIDTH / 2 && y < HEIGHT / 2) {
                     cell.addOrganisms();
                 }
+                cell.addPlants();
                 island[x][y] = cell;
             }
         }
     }
 
     public void growPlantIsland() {
-        for (int x = 0; x < WIDTH; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                Cell cell = new Cell(x,y);
+        for (int x = 0; x < island.length; x++) {
+            for (int y = 0; y < island[x].length; y++) {
                 Plant plant = new Plant();
-                plant.grow(cell);
+                plant.grow(getCell(x,y));
             }
         }
     }

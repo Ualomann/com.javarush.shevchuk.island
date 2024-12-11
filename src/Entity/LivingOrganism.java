@@ -5,7 +5,6 @@ import Entity.Location.Cell;
 import java.util.concurrent.locks.ReentrantLock;
 
 public abstract class LivingOrganism {
-    ReentrantLock lock = new ReentrantLock();
     boolean isDead;
 
     private double weight;

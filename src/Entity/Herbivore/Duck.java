@@ -1,12 +1,9 @@
 package Entity.Herbivore;
-
-import Setting.Omnivorous;
-
 import java.util.HashMap;
 
 import static Setting.Setting.*;
 
-public class Duck extends Herbivore implements Omnivorous {
+public class Duck extends Herbivore{
     private final HashMap<String,Integer> duckChance;{
         duckChance = new HashMap<>();
         duckChance.put(CATERPILLAR_NAME,CHANCE_DUCK_EAT_CATERPILLAR);

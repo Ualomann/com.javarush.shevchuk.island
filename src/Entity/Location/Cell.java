@@ -32,12 +32,6 @@ public class Cell implements Runnable{
     }
 
 
-    public List<LivingOrganism> getCellOffspring() {
-        return cellOffspring;
-    }
-
-    private final List<LivingOrganism> cellOffspring = new CopyOnWriteArrayList<>();
-
 
     public Cell(int x, int y) {
         this.x = x;
@@ -74,9 +68,6 @@ public class Cell implements Runnable{
         return lock;
     }
 
-
-
-
     public void addOrganisms() {
         List<LivingOrganism> temporarily = cell;
         List<LivingOrganism> organisms = StartingValue.populatingOneCell();
@@ -84,8 +75,11 @@ public class Cell implements Runnable{
         setCell(temporarily);
     }
 
-    public void addOrganism(LivingOrganism animal) {
-            cell.add(animal);
+    public void addPlants() {
+        List<LivingOrganism> temporarily = cell;
+        List<LivingOrganism> organisms = StartingValue.creationPlantOnCell();
+        temporarily.addAll(organisms);
+        setCell(temporarily);
     }
 
 
@@ -95,21 +89,15 @@ public class Cell implements Runnable{
 
     public void processWorking(){
         List<Animal> animals = getAnimalOnCell();
-        List<Plant> plants = getPlantOnCell();
         currentCell.getLock().lock();
         try {
-            plants.forEach(plant -> plant.grow(currentCell));
+            animals.forEach(animal -> animal.deathFromHunger(currentCell));
             animals.forEach(animal -> {
 
                 animal.reproduceOnCell(currentCell);
 
             });
             animals.forEach(animal -> animal.eatOnCell(currentCell));
-
-            animals.forEach(animal -> animal.deathFromHunger(currentCell));
-
-
-
         }finally{
             currentCell.getLock().unlock();
         }

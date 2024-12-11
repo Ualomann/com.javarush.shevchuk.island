@@ -163,13 +163,7 @@ public abstract class Animal extends LivingOrganism{
         }
     }
 
-    // Проверяем, можно ли размножаться
 
-
-    public void movingToOtherCells(Island island){
-        Cell[][] is = island.getIsland();
-
-    }
     public boolean canMoveOrganism(Cell cell){
         long countAnimalOnCell = cell.getAnimalCountOnCell(this);
         long maxCountInCell = this.getMaxCountOfCell();
@@ -267,9 +261,4 @@ public abstract class Animal extends LivingOrganism{
             die(this);
         }
     }
-
-
-
-
-
 }

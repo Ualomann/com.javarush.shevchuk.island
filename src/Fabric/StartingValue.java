@@ -1,10 +1,7 @@
 package Fabric;
 
 import Entity.LivingOrganism;
-import Fabric.AnimalFabric;
 import Fabric.AnimalFabric.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class StartingValue {
@@ -20,7 +17,6 @@ public class StartingValue {
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.BUFFALO,2);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.DUCK,10);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.CATERPILLAR,50);
-        AnimalFabric.createCountLiveOrganism(LiveOrgNames.PLANT,20);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.WOLF,5);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.FOX,5);
         AnimalFabric.createCountLiveOrganism(LiveOrgNames.BEAR,2);
